@@ -1,0 +1,53 @@
+name:                scan
+version:             0.1.0.0
+synopsis:            Implement the SCAN algorithm for spectral clustering
+description:         Please see README.md
+homepage:            http://github.com/GregorySchwartz/scan#readme
+license:             GPL-3
+license-file:        LICENSE
+author:              Gregory W. Schwartz
+maintainer:          gregory.schwartz@drexel.edu
+copyright:           Copyright 2016 Gregory W. Schwartz
+category:            Bioinformatics
+build-type:          Simple
+-- extra-source-files:
+cabal-version:       >=1.10
+
+library
+  hs-source-dirs:      src
+  exposed-modules:     Types
+                     , Utility
+                     , B1Matrix
+                     , BMatrix
+                     , CMatrix
+                     , NewmanGirvan
+                     , HierarchicalClustering
+                     , Print
+  build-depends:       base >= 4.7 && < 5
+                     , text
+                     , containers
+                     , lens
+                     , vector
+                     , inline-r
+                     , tree-fun
+                     , text-show
+  ghc-options:         -threaded -rtsopts -with-rtsopts=-N -O2
+  default-language:    Haskell2010
+
+executable scan
+  hs-source-dirs:      app
+  main-is:             Main.hs
+  ghc-options:         -threaded -rtsopts -with-rtsopts=-N -O2
+  build-depends:       base
+                     , scan
+                     , optparse-applicative
+                     , containers
+                     , vector
+                     , text
+                     , inline-r
+                     , pipes
+  default-language:    Haskell2010
+
+source-repository head
+  type:     git
+  location: https://github.com/GregorySchwartz/scan
