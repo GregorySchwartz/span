@@ -45,7 +45,7 @@ printCluster (TreeData { treeLabel = (ID label), treeRecords = records }) =
 printClusters :: ClusterTree -> T.Text
 printClusters (ClusterTree clusterTree) = header <> body
   where
-    header = "fragment_id,fragment,cluster_id\n"
+    header = "record_id,record,cluster_id\n"
     body   = T.unlines . fmap printCluster . leaves $ clusterTree
 
 -- | Print the basic structure of the tree
