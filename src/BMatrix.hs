@@ -33,10 +33,9 @@ getB2 numQGrams (B1 b1) = B2 . IMap.map (IMap.mapWithKey norm) $ b1
     norm k v   = normFactor k
                * v
     normFactor k = logBase 2 ( fromIntegral (IMap.size b1)
-                             / vLookup "getB2 vLookup" colVec (k - 1)
+                             / mLookup "getB2 vLookup" qGramCounts k
                              )
-    colVec     = V.imap (\k _ -> getNumRowsWithCol (k + 1) (B1 b1))
-               $ V.replicate numQGrams 0
+    qGramCounts = IMap.map mapSum . transpose $ b1
 
 -- | Get the euclidean norm of a row
 euclideanNorm :: Int -> B2 -> Double

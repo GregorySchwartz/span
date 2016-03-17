@@ -37,6 +37,7 @@ clusterEmpty :: Height
              -> V.Vector (RowID, Record)
              -> R s (Tree TreeData)
 clusterEmpty !height !(ID label) !records = do
+    [r| print("HOWDY") |]
     let treeData = TreeData { treeLabel    = ID label
                             , treeSize     = Size . V.length $ records
                             , treeHeight   = height
@@ -70,8 +71,6 @@ clusterFull !height !(ID label) !records !b = do
 
     ngResultR    <- ngModularity b part
     let ngResult =  (H.fromSomeSEXP ngResultR) :: Double
-    H.io . print $ records
-    H.io . print $ ngResult
 
     let treeData = TreeData { treeLabel    = ID label
                             , treeSize     = Size . V.length $ records

@@ -34,22 +34,26 @@ data TreeData = TreeData { treeLabel    :: !ID
                          }
                 deriving (Eq, Show)
 
-newtype Q           = Q Int deriving (Eq, Num, Read, Show)
-newtype ID          = ID Int deriving (Eq, Num, Show)
+newtype Q           = Q { unQ :: Int } deriving (Eq, Num, Read, Show)
+newtype ID          = ID { unID :: Int } deriving (Eq, Num, Show)
 newtype Size        = Size Int deriving (Eq, Num, Show)
 newtype Height      = Height Int deriving (Eq, Num, Show)
 newtype Record      = Record { unRecord :: T.Text } deriving (Eq, Ord, Show)
-newtype QGram       = QGram { unQGram :: T.Text } deriving (Eq, Ord)
+newtype QGram       = QGram { unQGram :: T.Text } deriving (Eq, Ord, Show)
 newtype Row         = Row Int deriving (Show)
 newtype Column      = Column Int deriving (Show)
 newtype QGramMap    = QGramMap { unQGramMap :: Map.Map QGram QGramID }
 newtype PreB1Row    = PreB1Row { unPreB1Row :: [(QGram, Double)] }
+                      deriving (Eq, Ord, Show)
 newtype B1Row       = B1Row { unB1Row :: [(QGramID, Double)] }
 newtype B1          = B1 { unB1 :: IMap.IntMap (IMap.IntMap Double) }
 newtype B2          = B2 { unB2 :: IMap.IntMap (IMap.IntMap Double) }
 newtype B           = B  { unB  :: IMap.IntMap (IMap.IntMap Double) }
                       deriving (Eq, Show)
-newtype ClusterTree = ClusterTree (Tree TreeData)
+newtype ClusterTree = ClusterTree { unClusterTree :: (Tree TreeData) }
+                      deriving (Show)
+newtype Alphabet    = Alphabet { unAlphabet :: (Map.Map Char Int) }
+                      deriving (Show)
 
 -- Basic
 type RowID   = Int

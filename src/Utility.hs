@@ -4,20 +4,26 @@ Gregory W. Schwartz
 Collections the functions pertaining to general helpful functions
 -}
 
+{-# LANGUAGE BangPatterns #-}
 {-# LANGUAGE QuasiQuotes #-}
 
 module Utility
     ( nub'
     , vLookup
+    , mLookup
     , mapSum
+    , getAlphabet
     , bToRB
+    , transpose
     ) where
 
 -- Standard
 import Data.Maybe
 import qualified Data.Set as Set
 import qualified Data.Vector as V
+import qualified Data.Map.Strict as Map
 import qualified Data.IntMap.Strict as IMap
+import Data.Monoid
 
 -- Cabal
 import qualified Foreign.R as R
@@ -36,9 +42,27 @@ nub' = Set.toList . Set.fromList
 vLookup :: String -> V.Vector a -> Int -> a
 vLookup s xs = fromMaybe (error s) . (V.!?) xs
 
+-- | Helpful error for map lookup
+mLookup :: String -> IMap.IntMap a -> Int -> a
+mLookup s xs = fromMaybe (error s) . flip IMap.lookup xs
+
 -- | Strict sum over IntMap
 mapSum :: (Num a) => IMap.IntMap a -> a
 mapSum = IMap.foldl' (+) 0
+
+-- | Get the alphabet map, ids for each character
+getAlphabet :: String -> Alphabet
+getAlphabet = Alphabet . Map.fromList . flip zip [0..] . ("#$" <>)
+
+-- | Transpose a intmap matrix
+transpose :: IMap.IntMap (IMap.IntMap a) -> IMap.IntMap (IMap.IntMap a)
+transpose = IMap.foldlWithKey'
+            (\acc k -> joinAcc acc . joinNewMaps . fmap (mapMake k) . IMap.toAscList)
+            IMap.empty
+  where
+    joinAcc             = IMap.unionWith IMap.union
+    joinNewMaps         = IMap.unionsWith IMap.union
+    mapMake !x (!y, !z) = IMap.singleton y (IMap.singleton x z)
 
 -- | Convert a B matrix to its sparse R matrix representation
 bToRB :: B -> R s (R.SomeSEXP s)
