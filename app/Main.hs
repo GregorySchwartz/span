@@ -3,7 +3,6 @@ Gregory W. Schwartz
 
 Executes the SCAN algorithm to cluster a list of records
 http://research.google.com/pubs/pub36940.html
-
 -}
 
 {-# LANGUAGE BangPatterns #-}

@@ -37,7 +37,6 @@ clusterEmpty :: Height
              -> V.Vector (RowID, Record)
              -> R s (Tree TreeData)
 clusterEmpty !height !(ID label) !records = do
-    [r| print("HOWDY") |]
     let treeData = TreeData { treeLabel    = ID label
                             , treeSize     = Size . V.length $ records
                             , treeHeight   = height

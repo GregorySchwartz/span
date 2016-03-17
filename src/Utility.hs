@@ -66,7 +66,7 @@ transpose = IMap.foldlWithKey'
 
 -- | Convert a B matrix to its sparse R matrix representation
 bToRB :: B -> R s (R.SomeSEXP s)
-bToRB (B b) = [r| suppressMessages(require("Matrix"))
+bToRB (B b) = [r| require("Matrix")
                   x = sparseMatrix(i=rows_hs, j=cols_hs, x=vals_hs)
               |]
   where
