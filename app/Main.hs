@@ -93,31 +93,32 @@ options = Options
 
 mainFunc :: Options -> IO ()
 mainFunc opts = do
-    let readPipes = case input opts of
-                        Nothing  -> PT.stdinLn
-                        (Just x) -> PT.readFileLn x
+    let alphabet      = fmap getAlphabet . alphabetString $ opts
+        readPipes     = case input opts of
+                            Nothing  -> PT.stdinLn
+                            (Just x) -> PT.readFileLn x
+
 
     contents <- fmap nub' . PT.runSafeT . runEffect $ P.toListM $ readPipes
                     >-> P.filter (not . T.null)
                     >-> P.map (\ !x -> ( Record x
-                                       , recordToQGrams (Q $ q opts) (Record x)
+                                       , getB1Row alphabet (Q $ q opts) (Record x)
                                        )
                               )
     let recordsOnly   = V.fromList . fmap fst $ contents
         recordIDs     = V.enumFromN 1 . V.length $ recordsOnly
         records       = V.zip recordIDs recordsOnly
-        alphabet      = fmap getAlphabet . alphabetString $ opts
-        preB1Rows     = fmap snd contents
         numQGrams     = case alphabet of
                             Nothing -> (fromEnum (maxBound :: Char)) ^ (q opts)
                             (Just (Alphabet x)) -> (Map.size x) ^ (q opts)
-        bMat          = getB
-                      . getB2 numQGrams
-                      . getB1 alphabet (Q $ q opts)
-                      $ preB1Rows
-
     R.withEmbeddedR R.defaultConfig $ R.runRegion $ do
-        rB          <- bToRB bMat
+        rB          <- mToRM
+                     . unB
+                     . getB
+                     . getB2
+                     . getB1 alphabet (Q $ q opts)
+                     . map snd
+                     $ contents
         clusterTree <- cluster 0 (ID 1) records rB
 
         -- Output clusters

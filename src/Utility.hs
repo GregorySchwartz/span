@@ -13,7 +13,7 @@ module Utility
     , mLookup
     , mapSum
     , getAlphabet
-    , bToRB
+    , mToRM
     , transpose
     ) where
 
@@ -64,19 +64,19 @@ transpose = IMap.foldlWithKey'
     joinNewMaps         = IMap.unionsWith IMap.union
     mapMake !x (!y, !z) = IMap.singleton y (IMap.singleton x z)
 
--- | Convert a B matrix to its sparse R matrix representation
-bToRB :: B -> R s (R.SomeSEXP s)
-bToRB (B b) = [r| suppressMessages(require("Matrix"))
-                  x = sparseMatrix(i=rows_hs, j=cols_hs, x=vals_hs)
-              |]
+-- | Convert an intmap matrix to its sparse R matrix representation
+mToRM :: IMap.IntMap (IMap.IntMap Double) -> R s (R.SomeSEXP s)
+mToRM mat = [r| suppressMessages(require("Matrix"))
+                x = sparseMatrix(i=rows_hs, j=cols_hs, x=vals_hs)
+            |]
   where
-    rows :: [Double]
-    rows  = concatMap (fmap fromIntegral . snd)
-          . IMap.toAscList
-          . IMap.mapWithKey (\k v -> replicate (IMap.size v) k)
-          $ b
-    cols :: [Double]
-    cols  = concatMap (map (fromIntegral . fst) . snd) flatB
-    vals :: [Double]
-    vals  = concatMap (map snd . snd) flatB
-    flatB = IMap.toAscList . IMap.map IMap.toAscList $ b
+    rows    :: [Double]
+    rows     = concatMap (fmap fromIntegral . snd)
+             . IMap.toAscList
+             . IMap.mapWithKey (\k v -> replicate (IMap.size v) k)
+             $ mat
+    cols    :: [Double]
+    cols     = concatMap (map (fromIntegral . fst) . snd) flatMat
+    vals    :: [Double]
+    vals     = concatMap (map snd . snd) flatMat
+    flatMat  = IMap.toAscList . IMap.map IMap.toAscList $ mat

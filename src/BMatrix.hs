@@ -27,13 +27,13 @@ getNumRowsWithCol x =
 
 -- | Get the B2 matrix from the B1 matrix, using the qGram length to figure
 -- out a mapping of the column ints
-getB2:: Int -> B1 -> B2
-getB2 numQGrams (B1 b1) = B2 . IMap.map (IMap.mapWithKey norm) $ b1
+getB2:: B1 -> B2
+getB2 (B1 b1) = B2 . IMap.map (IMap.mapWithKey norm) $ b1
   where
     norm k v   = normFactor k
                * v
     normFactor k = logBase 2 ( fromIntegral (IMap.size b1)
-                             / mLookup "getB2 vLookup" qGramCounts k
+                             / mLookup "getB2 mLookup" qGramCounts k
                              )
     qGramCounts = IMap.map mapSum . transpose $ b1
 

@@ -9,9 +9,9 @@ from the records
 {-# LANGUAGE OverloadedStrings #-}
 
 module B1Matrix
-    ( recordToQGrams
-    , getB1
-    , getQGramMapFromRows
+    ( getB1
+    , getB1Row
+    --, getQGramMapFromRows
     , projectQGramToInt
     ) where
 
@@ -46,9 +46,9 @@ toQGrams (Q q) !acc (Record record)
     | otherwise           =
         toQGrams (Q q) (QGram (T.take q record) : acc) (Record $ T.tail record)
 
--- | Count the number of qgrams in a list.
-countQGrams :: [QGram] -> [(QGram, Double)]
-countQGrams = Map.toAscList . Map.fromListWith (+) . flip zip [1,1..]
+-- | Count the number of ints in a list
+countInts ::  [Int] -> IMap.IntMap Double
+countInts = IMap.fromListWith (+) . flip zip [1,1..]
 
 -- | Convert a qgram to the respective integer representation. Unused until
 -- a better representation comes along.
@@ -78,19 +78,25 @@ projectQGramToInt alphabet (Q q) =
     aSize    = case alphabet of
                    Nothing             -> fromEnum (maxBound :: Char)
                    (Just (Alphabet x)) -> Map.size x
--- | Convert a record to a tf-idf representation, with no index yet
-recordToQGrams :: Q -> Record -> PreB1Row
-recordToQGrams q =
-    PreB1Row . countQGrams . toQGrams q [] . differentiateStartEndRecord q
+
+-- | Convert a record to a tf-idf row representation, with qgrams as ints
+-- now
+getB1Row :: Maybe Alphabet -> Q -> Record -> B1Row
+getB1Row alphabet q =
+    B1Row
+        . countInts
+        . fmap (projectQGramToInt alphabet q)
+        . toQGrams q []
+        . differentiateStartEndRecord q
 
 -- | Make a qgram map from a bunch of record, making sure there is only one
 -- qgram at a time
-getQGramMapFromRows :: [PreB1Row] -> QGramMap
-getQGramMapFromRows = QGramMap
-                    . Map.fromList
-                    . flip zip [1..]
-                    . nub'
-                    . concatMap (map fst . unPreB1Row)
+-- getQGramMapFromRows :: [PreB1Row] -> QGramMap
+-- getQGramMapFromRows = QGramMap
+--                     . Map.fromList
+--                     . flip zip [1..]
+--                     . nub'
+--                     . concatMap (map fst . unPreB1Row)
 
 -- | Convert the QGrams to an int id based off of an id map
 qGramToInt :: QGram -> QGramMap -> QGramID
@@ -99,14 +105,9 @@ qGramToInt qgram =
         . Map.lookup qgram
         . unQGramMap
 
--- | Make a B1 row from a PreB1Row by converting qgrams to ints
-getB1Row :: Maybe Alphabet -> Q -> PreB1Row -> B1Row
-getB1Row alphabet q =
-    B1Row . map (over _1 (projectQGramToInt alphabet q)) . unPreB1Row
-
 -- | Get the IntMap representation of the B1 from a list of PreB1Rows
-getB1 :: Maybe Alphabet -> Q -> [PreB1Row] -> B1
+getB1 :: Maybe Alphabet -> Q -> [B1Row] -> B1
 getB1 alphabet q = B1
                  . IMap.fromList
                  . zip [1..]
-                 . fmap (IMap.fromList . unB1Row . getB1Row alphabet q)
+                 . fmap unB1Row
