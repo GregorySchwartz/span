@@ -25,7 +25,6 @@ import Data.Monoid
 
 -- Cabal
 import qualified Data.Text as T
-import Control.Lens
 
 -- Local
 import Types
