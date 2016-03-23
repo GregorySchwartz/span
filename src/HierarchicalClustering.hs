@@ -6,6 +6,7 @@ records
 -}
 
 {-# LANGUAGE BangPatterns #-}
+{-# LANGUAGE MultiWayIf #-}
 {-# LANGUAGE QuasiQuotes #-}
 
 module HierarchicalClustering
@@ -54,7 +55,11 @@ clusterFull :: Height
             -> R s (Tree TreeData)
 clusterFull !height !(ID label) !records !b = do
     c          <- getC b
-    part       <- [r| as.integer(sign(svd(c_hs, nu=2, nv=0)$u[,2]) < 0) |]
+    let x = (fromIntegral . V.length $ records) :: Double
+    part       <- if
+                    | V.length records == 2 -> [r| c(0, 1) |]
+                    | V.length records < 5  -> [r| as.integer(sign(svd(c_hs, nu=2, nv=0)$u[,2]) < 0) |]
+                    | otherwise             -> [r| as.integer(sign(irlba(c_hs, nu=2, nv=0, right_only=FALSE, maxit=2)$u[,2]) < 0) |]
 
     leftIndex  <- [r| as.numeric(which(part_hs == 0)) |]
     rightIndex <- [r| as.numeric(which(part_hs == 1)) |]

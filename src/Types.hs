@@ -5,6 +5,7 @@ Collections the types used in the program
 -}
 
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
+
 module Types where
 
 -- Standard
@@ -37,7 +38,7 @@ data TreeData = TreeData { treeLabel    :: !ID
 newtype Q           = Q { unQ :: Int } deriving (Eq, Num, Read, Show)
 newtype ID          = ID { unID :: Int } deriving (Eq, Num, Show)
 newtype Size        = Size Int deriving (Eq, Num, Show)
-newtype Height      = Height Int deriving (Eq, Num, Show)
+newtype Height      = Height { unHeight :: Int } deriving (Eq, Num, Show)
 newtype Record      = Record { unRecord :: T.Text } deriving (Eq, Ord, Show)
 newtype QGram       = QGram { unQGram :: T.Text } deriving (Eq, Ord, Show)
 newtype Row         = Row Int deriving (Show)

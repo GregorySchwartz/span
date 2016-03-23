@@ -26,7 +26,7 @@ import Types
 -- | Get the D matrix from the B Matrix
 getD12 :: R.SomeSEXP s -> R s (R.SomeSEXP s)
 getD12 b =
-    [r| diag(as.vector((b_hs %*% (t(b_hs) %*% matrix(rep(1, times=nrow(b_hs)))))^(-1/2))) |]
+    [r| Diagonal(x=as.vector((b_hs %*% (t(b_hs) %*% matrix(rep(1, times=nrow(b_hs)))))^(-1/2))) |]
 
 -- | Get the C matrix from the B matrix
 getC :: R.SomeSEXP s -> R s (R.SomeSEXP s)

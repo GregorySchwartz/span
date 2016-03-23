@@ -18,12 +18,14 @@ module Utility
     ) where
 
 -- Standard
+import Data.Int
 import Data.Maybe
 import qualified Data.Set as Set
 import qualified Data.Vector as V
 import qualified Data.Map.Strict as Map
 import qualified Data.IntMap.Strict as IMap
 import Data.Monoid
+import Debug.Trace
 
 -- Cabal
 import qualified Foreign.R as R
@@ -66,17 +68,17 @@ transpose = IMap.foldlWithKey'
 
 -- | Convert an intmap matrix to its sparse R matrix representation
 mToRM :: IMap.IntMap (IMap.IntMap Double) -> R s (R.SomeSEXP s)
-mToRM mat = [r| suppressMessages(require("Matrix"))
+mToRM mat = [r| suppressMessages(library("Matrix"))
                 x = sparseMatrix(i=rows_hs, j=cols_hs, x=vals_hs)
             |]
   where
-    rows    :: [Double]
+    rows    :: [Int32]
     rows     = concatMap (fmap fromIntegral . snd)
              . IMap.toAscList
              . IMap.mapWithKey (\k v -> replicate (IMap.size v) k)
              $ mat
-    cols    :: [Double]
-    cols     = concatMap (map (fromIntegral . fst) . snd) flatMat
+    cols    :: [Int32]
+    cols     = concatMap (map (fromIntegral . fst) . snd) $ flatMat
     vals    :: [Double]
     vals     = concatMap (map snd . snd) flatMat
     flatMat  = IMap.toAscList . IMap.map IMap.toAscList $ mat

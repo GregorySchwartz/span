@@ -75,7 +75,14 @@ projectQGramToInt alphabet (Q q) =
                     fromMaybe (error "Character not in alphabet")
                         . flip Map.lookup x
     aSize    = case alphabet of
-                   Nothing             -> fromEnum (maxBound :: Char)
+                   Nothing             -> error "Must use an alphabet right\
+                                                \ now, as R uses 32 bit\
+                                                \ integers and all\
+                                                \ possibilities for strings\
+                                                \ of unicode range results in\
+                                                \ too large of a number for R."
+                   -- Undo this comment when R supports 64 bit integers
+                   -- Nothing             -> fromEnum (maxBound :: Char)
                    (Just (Alphabet x)) -> Map.size x
 
 -- | Convert a record to a tf-idf row representation, with qgrams as ints

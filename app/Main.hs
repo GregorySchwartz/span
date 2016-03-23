@@ -87,7 +87,8 @@ options = Options
                  \ periods and commas,\
                  \ the alphabet would be \"ABCDEFGHIJKLMNOPQRSTUVWXYZ.,\".\
                  \ If empty, uses the (very large and slow)\
-                 \ maxBound for characters."
+                 \ maxBound for characters (not supported until R supports\
+                 \ 64 bit integers)."
           )
         )
 
@@ -119,6 +120,8 @@ mainFunc opts = do
                      . getB1 alphabet (Q $ q opts)
                      . map snd
                      $ contents
+
+        [r| suppressMessages(library("irlba")) |]
         clusterTree <- cluster 0 (ID 1) records rB
 
         -- Output clusters
@@ -138,6 +141,7 @@ mainFunc opts = do
                       . printTree
                       . ClusterTree
                       $ clusterTree
+        return ()
 
 main :: IO ()
 main = execParser opts >>= mainFunc
