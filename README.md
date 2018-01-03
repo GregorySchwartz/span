@@ -1,2 +1,2 @@
-# scan
-Executes the SCAN algorithm to cluster a list of records
+# span
+Executes the SPAN algorithm to cluster a list of records

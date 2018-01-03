@@ -1,8 +1,8 @@
-name:                scan
+name:                span
 version:             0.1.0.0
-synopsis:            Implement the SCAN algorithm for spectral clustering
+synopsis:            Implement the SPAN algorithm for spectral clustering
 description:         Please see README.md
-homepage:            http://github.com/GregorySchwartz/scan#readme
+homepage:            http://github.com/GregorySchwartz/span#readme
 license:             GPL-3
 license-file:        LICENSE
 author:              Gregory W. Schwartz
@@ -34,12 +34,12 @@ library
   ghc-options:         -O2
   default-language:    Haskell2010
 
-executable scan
+executable span
   hs-source-dirs:      app
   main-is:             Main.hs
   ghc-options:         -threaded -rtsopts -O2
   build-depends:       base
-                     , scan
+                     , span
                      , optparse-applicative
                      , containers
                      , vector
@@ -51,4 +51,4 @@ executable scan
 
 source-repository head
   type:     git
-  location: https://github.com/GregorySchwartz/scan
+  location: https://github.com/GregorySchwartz/span
