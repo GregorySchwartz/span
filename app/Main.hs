@@ -1,7 +1,7 @@
-{- scan
+{- span
 Gregory W. Schwartz
 
-Executes the SCAN algorithm to cluster a list of records
+Executes the SPAN algorithm to cluster a list of records
 http://research.google.com/pubs/pub36940.html
 -}
 
@@ -148,5 +148,5 @@ main = execParser opts >>= mainFunc
   where
     opts = info (helper <*> options)
       ( fullDesc
-     <> progDesc "Executes the SCAN algorithm to cluster a list of records"
-     <> header "scan, Gregory W. Schwartz" )
+     <> progDesc "Executes the SPAN algorithm to cluster a list of records"
+     <> header "span, Gregory W. Schwartz" )
